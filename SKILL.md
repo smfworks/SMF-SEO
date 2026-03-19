@@ -122,6 +122,12 @@ H1: Target Keyword (exact or close variant)
 - **Authoritativeness:** Link to SMF Works' existing content, mention credentials where relevant
 - **Trustworthiness:** Include author bio, cite sources, be transparent about limitations
 
+**SMF Works E-E-A-T Assets to Leverage:**
+- Client implementations: "We've set up 50+ automation workflows..."
+- Real data: "In our testing of 10 AI tools..."
+- Process screenshots: "Here's our actual n8n workflow..."
+- Industry expertise: "Having worked with 100+ small businesses..."
+
 **On-Page SEO Checklist:**
 
 - [ ] Title tag: 50-60 chars, includes keyword near front
@@ -217,6 +223,69 @@ Refresh process:
 - Guest posting on industry blogs
 - Digital PR (original research, data studies)
 - Broken link building
+
+## Content Clustering & Topic Authority
+
+Build topical authority with pillar + cluster content:
+
+**Pillar Page:** Comprehensive guide (3,000+ words) covering broad topic
+**Cluster Content:** 5-10 focused articles (1,000-2,000 words) on subtopics
+
+**Example for SMF Works:**
+- **Pillar:** "The Complete Guide to AI Automation for Small Business"
+- **Cluster:**
+  - "Best AI Email Automation Tools"
+  - "How to Automate Lead Scoring"
+  - "n8n vs Zapier: Which is Better?"
+  - "AI Customer Service: Setup Guide"
+  - "10 Workflow Automations to Save 10 Hours/Week"
+
+**Internal Linking Architecture:**
+- All cluster posts link TO the pillar
+- Pillar links TO relevant cluster posts
+- Cluster posts link to each other where relevant
+
+## Competitor Content Gap Analysis (Agent Actions)
+
+**When:** Before writing any article
+**Purpose:** Find what competitors rank for that you don't
+
+**Agent Steps:**
+1. `web_search` "site:competitor.com [your topic]" to find their top content
+2. `web_fetch` 3-5 of their highest-ranking URLs
+3. Extract their H2s, word count, and target keywords
+4. `web_search` "[competitor] vs" and "alternatives to [competitor]" for opportunity keywords
+5. Identify: What topics do they cover that you don't? What angles are they missing?
+6. Output: Gap analysis report with priority content opportunities
+
+**Example Output:**
+"Competitor X ranks for 'AI automation examples' with a 2,000-word guide. We have no equivalent. Recommended: Create '50 AI Automation Examples for Small Business' (2,500 words, includes industry-specific breakdowns)."
+
+## When to Spawn Subagents
+
+Use `sessions_spawn` for:
+
+1. **Long-form drafting** (>1,500 words)
+   - Spawn writing model (e.g., ollama/kimi-k2.5:cloud) with full content brief
+   - Include: target keyword, outline, SMF brand voice, internal links
+   - Wait for completion, review, then publish
+
+2. **Multi-article content calendars**
+   - Spawn subagent to research and brief 12 articles
+   - Output: 12 content briefs with keywords and priority scores
+
+3. **SERP analysis at scale**
+   - Spawn subagent to analyze top 10 results for 5 target keywords
+   - Parallel processing saves time
+
+4. **Content refresh batching**
+   - Spawn subagent to audit 10 existing posts
+   - Output: Refresh priority list with specific recommendations
+
+**Do NOT spawn for:**
+- Single paragraph responses
+- Simple web searches
+- Tasks requiring immediate back-and-forth
 - Resource page outreach
 
 ## Success Metrics
