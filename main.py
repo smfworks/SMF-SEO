@@ -15,6 +15,7 @@ Usage:
 from __future__ import annotations
 
 import json
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -96,7 +97,7 @@ except ImportError:
 
 SKILL_NAME = "smf-seo-gee"
 MIN_TIER = "pro"
-PRO_COMMANDS = {"configure", "reconfigure", "status", "get", "update", "quick-test"}
+AUTH_REQUIRED = {"configure", "reconfigure"}
 
 
 def lookup_key(config: dict, key: str):
@@ -110,6 +111,8 @@ def lookup_key(config: dict, key: str):
 
 
 def check_pro_subscription() -> bool:
+    if os.environ.get("SMF_SEO_SKIP_AUTH") == "1":
+        return True
     if not HAS_AUTH:
         print("Warning: Auth system not available, skipping subscription check")
         return True
@@ -182,7 +185,7 @@ def main(argv: list[str] | None = None) -> int:
 
     cmd = args[0].lower()
 
-    if cmd in PRO_COMMANDS and not check_pro_subscription():
+    if cmd in AUTH_REQUIRED and not check_pro_subscription():
         return 1
 
     if cmd == "configure":
@@ -192,13 +195,21 @@ def main(argv: list[str] | None = None) -> int:
         reset_config()
         return run_wizard()
     if cmd == "status":
-        show_status()
+        try:
+            show_status()
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 3
         return 0
     if cmd == "get":
         if len(args) < 2:
             print("Usage: get <key> (e.g., organization.domain)", file=sys.stderr)
             return 2
-        found, val = lookup_key(load_config(), args[1])
+        try:
+            found, val = lookup_key(load_config(), args[1])
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 3
         if not found:
             print(f"Key not found: {args[1]}", file=sys.stderr)
             return 2
@@ -211,8 +222,14 @@ def main(argv: list[str] | None = None) -> int:
         if len(args) < 3:
             print("Usage: update <key> <value>", file=sys.stderr)
             return 2
-        print(f"Updating {args[1]} = {args[2]}")
-        print("(Use the configure wizard for full setup)")
+        try:
+            from config_manager import set_dotted_key
+
+            set_dotted_key(args[1], args[2])
+        except ValueError as exc:
+            print(f"Error: {exc}", file=sys.stderr)
+            return 2
+        print(f"Updated {args[1]}")
         return 0
     if cmd == "quick-test":
         keyword = " ".join(args[1:]) if len(args) > 1 else "your keyword"

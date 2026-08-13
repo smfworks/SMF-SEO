@@ -19,4 +19,4 @@ py-modules = ["main", "shared_auth"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-q"
-pythonpath = ["."]
+pythonpath = [".", "scripts"]

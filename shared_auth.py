@@ -186,9 +186,8 @@ def show_subscription_error(result: Dict):
     if "action" in result:
         print(f"👉 {result['action']}")
     print(f"")
-    print(f"💡 SMF Works Pro gives you access to all premium skills")
-    print(f"   Starting at $19.99/month (price locked forever)")
-    print(f"   Learn more: https://smf.works/subscribe")
+    print(f"SMF Works Pro is required for this skill.")
+    print(f"   Learn more: https://smfworks.com")
 
 
 # Backward compatibility alias
